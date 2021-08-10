@@ -9,23 +9,28 @@
 import SwiftUI
 
 struct EmojiMemoryGameView: View {
-    @ObservedObject var viewModel: EmojiMemoryGame
+    @ObservedObject var game: EmojiMemoryGame
     
     var body: some View {
-        Grid(viewModel.cards) { card in
-                CardView(card: card).onTapGesture {
-                    viewModel.choose(card: card)
+        ScrollView{
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]) {
+                ForEach(game.cards) { card in
+                    CardView(card: card)
+                        .aspectRatio(2/3, contentMode: .fit)
+                        .onTapGesture {
+                            game.choose(card)
+                    }
                 }
-                .padding(5)
+            .foregroundColor(.orange)
             }
-        .padding()
-        .foregroundColor(Color.orange)
+        }
+        .padding(.horizontal)
     }
 }
 
 struct CardView: View {
-    var card: MemoryGame<String>.Card
-    
+    var card: EmojiMemoryGame.Card
+
     var body: some View {
         GeometryReader { geometry in
             body(for: geometry.size)
@@ -34,14 +39,17 @@ struct CardView: View {
     
     func body(for size: CGSize) -> some View {
         ZStack{
+            let shape = RoundedRectangle(cornerRadius: cornerRadius)
             if card.isFaceUp {
-                RoundedRectangle(cornerRadius: cornerRadius).fill().foregroundColor(Color.white)
-                RoundedRectangle(cornerRadius: cornerRadius).stroke(lineWidth: edgeLineWidth)
+                shape.fill().foregroundColor(Color.white)
+                shape.stroke(lineWidth: edgeLineWidth)
                 Text(card.content)
-            } else {
-                if !card.isMatched {
-                    RoundedRectangle(cornerRadius: cornerRadius).fill()
-                }
+            }
+            else if card.isMatched {
+                shape.opacity(0)
+            }
+            else {
+                shape.fill()
             }
         }.font(Font.system(size: fontSize(for: size)))
     }
@@ -58,6 +66,6 @@ struct CardView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        EmojiMemoryGameView(viewModel: EmojiMemoryGame())
+        EmojiMemoryGameView(game: EmojiMemoryGame())
     }
 }
