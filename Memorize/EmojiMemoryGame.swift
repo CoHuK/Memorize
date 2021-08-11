@@ -12,9 +12,10 @@ class EmojiMemoryGame: ObservableObject {
     typealias Card = MemoryGame<String>.Card
     
     private static let emojis = ["👻","💀","🕷","🐱","💦","🐸","🐨","🐭","🐹","🐰","🦊"]
+    //Int.random(in:2..<emojis.count + 1)
     
     static func createMemoryGame() -> MemoryGame<String> {
-        return MemoryGame<String>(numberOfPairsOfCards: Int.random(in:2..<emojis.count + 1)) {pairIndex in
+        return MemoryGame<String>(numberOfPairsOfCards: 6) {pairIndex in
             return emojis[pairIndex]
         }
     }
