@@ -29,38 +29,27 @@ struct CardView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            body(for: geometry.size)
-        }
-    }
-    
-    func body(for size: CGSize) -> some View {
-        ZStack{
-            let shape = RoundedRectangle(cornerRadius: DrawingConstants.cornerRadius)
-            if card.isFaceUp {
-                shape.fill().foregroundColor(Color.white)
-                shape.stroke(lineWidth: DrawingConstants.edgeLineWidth)
+            ZStack{
                 Pie(startAngle: Angle(degrees: 0-90), endAngle: Angle(degrees: 120-90))
                     .padding(4).opacity(0.5)
                 Text(card.content)
+                    .rotationEffect(Angle.degrees(card.isMatched ? 360 : 0))
+                    .animation(Animation.linear(duration: 1).repeatForever(autoreverses: false))
+                    .font(Font.system(size: DrawingConstants.fontSize))
+                    .scaleEffect(scale(thatFits: geometry.size))
             }
-            else if card.isMatched {
-                shape.opacity(0)
-            }
-            else {
-                shape.fill()
-            }
-        }.font(Font.system(size: fontSize(for: size)))
+            .cardify(isFaceUp: card.isFaceUp)
+        }
     }
     
     // MARK: - Drawing Constants
     private struct DrawingConstants{
-        static let cornerRadius: CGFloat = 10.0
-        static let edgeLineWidth: CGFloat = 3
         static let fontScale: CGFloat = 0.75
+        static let fontSize: CGFloat = 32
     }
 
-    private func fontSize(for size: CGSize) -> CGFloat {
-        min(size.width, size.height) * DrawingConstants.fontScale
+    private func scale(thatFits size: CGSize) -> CGFloat {
+        min(size.width, size.height) / (DrawingConstants.fontSize / DrawingConstants.fontScale)
     }
 }
 
