@@ -15,7 +15,7 @@ class EmojiMemoryGame: ObservableObject {
     //Int.random(in:2..<emojis.count + 1)
     
     static func createMemoryGame() -> MemoryGame<String> {
-        return MemoryGame<String>(numberOfPairsOfCards: 6) {pairIndex in
+        return MemoryGame<String>(numberOfPairsOfCards: 8) {pairIndex in
             return emojis[pairIndex]
         }
     }
@@ -30,5 +30,13 @@ class EmojiMemoryGame: ObservableObject {
     
     func choose(_ card: Card) {
         model.choose(card)
+    }
+    
+    func shufle() {
+        model.shuffle()
+    }
+    
+    func restart() {
+        model = EmojiMemoryGame.createMemoryGame()
     }
 }
